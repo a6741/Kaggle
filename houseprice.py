@@ -23,7 +23,7 @@ from sklearn.feature_selection import chi2
 global enclist,objlist,ohelist
 def sol(csv):
     
-    global csvcp
+    global csvcp,objlist
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
@@ -35,13 +35,13 @@ def sol(csv):
             objlist.append(str(u[k]))
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(method='bfill').fillna(method='ffill')
         else:
-            means=csvcp.loc[:,u[k]].mean()
+            means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
     for k in objlist:
-        label_encoder = LabelEncoder()
-        encoded = label_encoder.fit(csvcp[k])
-        integer_encoded=encoded.transform(csvcp[k])
-        csvcp.loc[:,k]=integer_encoded
+#        label_encoder = LabelEncoder()
+#        encoded = label_encoder.fit(csvcp[k])
+#        integer_encoded=encoded.transform(csvcp[k])
+#        csvcp.loc[:,k]=integer_encoded
 #        ohe=OneHotEncoder().fit(integer_encoded.reshape(-1,1))
 #        tt=ohe.transform(integer_encoded.reshape(-1,1)).toarray()
 #        tl=len(tt[0])
@@ -49,7 +49,7 @@ def sol(csv):
 #        for ts in range(tl):
 #            uk=k+str(ts)
 #            csvcp.loc[:,uk]=dt[ts]
-#        csvcp.drop(k,axis=1,inplace=True)
+        csvcp.drop(k,axis=1,inplace=True)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     
     
@@ -81,7 +81,8 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=8,max_features=53,random_state=2)
+lr = tree.DecisionTreeRegressor(max_depth=7,max_features=26,random_state=8)
+#7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']
 #xx=train1.drop(['SalePrice'],axis=1)

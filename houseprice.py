@@ -39,7 +39,7 @@ def sol(csv,trmax):
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
     colli=findnoise(csvcp,trmax)
-    #csvcp.drop(colli,axis=0,inplace=True)
+    csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
     t=csvcp.dtypes
     objlist=['MSSubClass']
@@ -54,7 +54,7 @@ def sol(csv,trmax):
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
-    csvcp.drop(colli,axis=0,inplace=True)
+#    csvcp.drop(colli,axis=0,inplace=True)
     csvcp.drop(delist,axis=1,inplace=True)
     for k in objlist:
         label_encoder = LabelEncoder()
@@ -113,7 +113,7 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=7,max_features=169,random_state=4)
+lr = tree.DecisionTreeRegressor(max_depth=7,max_features=235,random_state=9)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']

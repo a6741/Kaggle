@@ -335,11 +335,11 @@ li2=[i for i in tfi.index]
 file=ano.drop(li2)
 tfi=ano.drop(li1)
 
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
-usb=SelectKBest(chi2, k=5)
-usb.fit(file, y)
-file=usb.transform(file)
+#from sklearn.feature_selection import SelectKBest
+#from sklearn.feature_selection import chi2
+#usb=SelectKBest(chi2, k=5)
+#usb.fit(file, y)
+#file=usb.transform(file)
 
 #from sklearn.decomposition import PCA
 
@@ -390,7 +390,7 @@ cla.fit(file,y)
 
 #tfi=anotherway(tfi)
 tfic=tfi.copy()
-tfic=usb.transform(tfic)
+#tfic=usb.transform(tfic)
 
 
 

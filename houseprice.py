@@ -11,7 +11,7 @@ import numpy as np # linear algebra
 import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 
 from sklearn.preprocessing import OneHotEncoder
-
+from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import LabelEncoder
 
 from sklearn import linear_model
@@ -19,36 +19,58 @@ from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectPercentile
 from sklearn.feature_selection import chi2
 
-
-global enclist,objlist,ohelist
-def sol(csv):
+def findnoise(csv,trmax):
+    thresh=3
+    noiselis=set()
+    for qs in csv:
+        q=csv[qs]
+        if '64' in str(q.dtype):
+            mean=q.mean()
+            std=q.std()
+            for k in q.index:
+                if k<=trmax:
+                    if q.loc[k]<mean-thresh*std or q.loc[k]>mean+thresh*std:
+                        noiselis.add(k)
+    return noiselis
+def sol(csv,trmax):
     
-    global csvcp,objlist
+    global csvcp,colli
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
+    #colli=findnoise(csvcp,trmax)
+    #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
     t=csvcp.dtypes
     objlist=['MSSubClass']
+    delist=[]
     for k in range(len(u)):
-        if '64' not in str(t[k]):
+        #print((csvcp[u[k]]).value_counts())
+        if (csvcp[u[k]]).value_counts().iloc[0]>0.8*usv:
+            delist.append(u[k])
+        elif '64' not in str(t[k]):
             objlist.append(str(u[k]))
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(method='bfill').fillna(method='ffill')
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
+    csvcp.drop(delist,axis=1,inplace=True)
     for k in objlist:
-#        label_encoder = LabelEncoder()
-#        encoded = label_encoder.fit(csvcp[k])
-#        integer_encoded=encoded.transform(csvcp[k])
-#        csvcp.loc[:,k]=integer_encoded
-#        ohe=OneHotEncoder().fit(integer_encoded.reshape(-1,1))
-#        tt=ohe.transform(integer_encoded.reshape(-1,1)).toarray()
-#        tl=len(tt[0])
-#        dt=pd.DataFrame(tt).set_index(csvcp.index)
-#        for ts in range(tl):
-#            uk=k+str(ts)
-#            csvcp.loc[:,uk]=dt[ts]
+        label_encoder = LabelEncoder()
+        encoded = label_encoder.fit(csvcp[k])
+        integer_encoded=encoded.transform(csvcp[k])
+        csvcp.loc[:,k]=integer_encoded
+        
+#    sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
+#    csvcp=sel.fit_transform(csvcp)
+    for k in objlist:                
+        ohe=OneHotEncoder().fit(integer_encoded.reshape(-1,1))
+        tt=ohe.transform(integer_encoded.reshape(-1,1)).toarray()
+        tl=len(tt[0])
+        dt=pd.DataFrame(tt).set_index(csvcp.index)
+        for ts in range(tl):
+            uk=k+str(ts)
+            csvcp.loc[:,uk]=dt[ts]
         csvcp.drop(k,axis=1,inplace=True)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     
@@ -63,10 +85,19 @@ test=pd.read_csv('/home/ljk/下载/kaggle/all (2)/test.csv',index_col='Id')
 y=train['SalePrice']
 trains=train.drop(['SalePrice'],axis=1)
 u=pd.concat((trains,test),axis=0)
-ut=sol(u)
+trmax=train.index[-1]
+ut=sol(u,trmax)
 li1=[i for i in test.index]
 li2=[i for i in train.index]
 
+#li1=[]
+#li2=[]
+#for i in ut.index:
+#    if i <=trmax:
+#        li2.append(i)
+#    else:
+#        li1.append(i)
+#y.drop(colli,axis=0,inplace=True)
 
 #train1=ut[0:len(li2)]#ut.drop(li2)
 #test1=ut[len(li2):]#ut.drop(li1)
@@ -81,7 +112,7 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=7,max_features=26,random_state=8)
+lr = tree.DecisionTreeRegressor(max_depth=9,max_features=63,random_state=3)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']

@@ -38,7 +38,7 @@ def sol(csv,trmax):
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
-    #colli=findnoise(csvcp,trmax)
+#    colli=findnoise(csvcp,trmax)
     #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
     t=csvcp.dtypes
@@ -46,7 +46,7 @@ def sol(csv,trmax):
     delist=[]
     for k in range(len(u)):
         #print((csvcp[u[k]]).value_counts())
-        if (csvcp[u[k]]).value_counts().iloc[0]>0.8*usv:
+        if (csvcp[u[k]]).value_counts().iloc[0]>0.95*usv:
             delist.append(u[k])
         elif '64' not in str(t[k]):
             objlist.append(str(u[k]))
@@ -54,6 +54,7 @@ def sol(csv,trmax):
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
+#    csvcp.drop(colli,axis=0,inplace=True)
     csvcp.drop(delist,axis=1,inplace=True)
     for k in objlist:
         label_encoder = LabelEncoder()
@@ -112,7 +113,7 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=9,max_features=63,random_state=3)
+lr = tree.DecisionTreeRegressor(max_depth=7,max_features=143,random_state=2)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']

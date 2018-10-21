@@ -14,6 +14,10 @@ from sklearn.svm import SVC
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
+def noise():
+    
+
+
 def anotherway(file):
     for k in file.index:
         if file.loc[(k,'Sex')]=='female':

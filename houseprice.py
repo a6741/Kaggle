@@ -20,7 +20,7 @@ from sklearn.feature_selection import SelectPercentile
 from sklearn.feature_selection import chi2
 
 def findnoise(csv,trmax):
-    thresh=3
+    thresh=4
     noiselis=set()
     for qs in csv:
         q=csv[qs]
@@ -38,8 +38,8 @@ def sol(csv,trmax):
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
-    colli=findnoise(csvcp,trmax)
-    csvcp.drop(colli,axis=0,inplace=True)
+    #colli=findnoise(csvcp,trmax)
+    #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
     t=csvcp.dtypes
     objlist=['MSSubClass']
@@ -66,7 +66,7 @@ def sol(csv,trmax):
 #    csvcp=sel.fit_transform(csvcp)
     for k in objlist:                
         ohe=OneHotEncoder().fit(integer_encoded.reshape(-1,1))
-        tt=ohe.transform(integer_encoded.reshape(-1,1)).toarray()
+        tt=ohe.transform(integer_encoded.reshape(-1,1)).toarray()[:,1:]
         tl=len(tt[0])
         dt=pd.DataFrame(tt).set_index(csvcp.index)
         for ts in range(tl):
@@ -91,14 +91,14 @@ ut=sol(u,trmax)
 li1=[i for i in test.index]
 li2=[i for i in train.index]
 
-li1=[]
-li2=[]
-for i in ut.index:
-    if i <=trmax:
-        li2.append(i)
-    else:
-        li1.append(i)
-y.drop(colli,axis=0,inplace=True)
+#li1=[]
+#li2=[]
+#for i in ut.index:
+#    if i <=trmax:
+#        li2.append(i)
+#    else:
+#        li1.append(i)
+#y.drop(colli,axis=0,inplace=True)
 
 #train1=ut[0:len(li2)]#ut.drop(li2)
 #test1=ut[len(li2):]#ut.drop(li1)
@@ -113,7 +113,7 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=7,max_features=235,random_state=9)
+lr = tree.DecisionTreeRegressor(max_depth=7,max_features=143,random_state=2)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']

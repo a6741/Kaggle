@@ -14,8 +14,6 @@ from sklearn.svm import SVC
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
-def noise():
-    
 
 
 def anotherway(file):
@@ -220,7 +218,7 @@ def ybm(file):
     
     namee=['Name','Embarked','Type']
     for sbs in namee:
-        oh=OneHotEncoder().fit_transform(file[sbs].reshape(-1,1)).toarray()
+        oh=OneHotEncoder().fit_transform(file[sbs].reshape(-1,1)).toarray()[:,1:]
         ohl=oh.shape[1]
         doh=pd.DataFrame(oh).set_index(file.index)
         num=sbs
@@ -330,7 +328,7 @@ tfi=pd.read_csv('/home/ljk/下载/kaggle/all/test.csv',encoding='utf8',index_col
 y=file['Survived']
 files=file.drop(['Survived'],axis=1)
 u=pd.concat((files,tfi),axis=0)
-ano=anotherway(u)
+ano=ybm(u)
 
 li1=[i for i in files.index]
 li2=[i for i in tfi.index]
@@ -358,7 +356,7 @@ tfi=ano.drop(li1)
 #from sklearn.linear_model import SGDClassifier
 
 from sklearn.ensemble import RandomForestClassifier
-cla=RandomForestClassifier(max_depth=6, n_estimators=9, random_state=7)
+cla=RandomForestClassifier(max_depth=7, n_estimators=9,max_features=6,random_state=2)
 
 #fibf.dropna()
 #from sklearn.linear_model import LogisticRegression

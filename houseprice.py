@@ -38,7 +38,7 @@ def sol(csv,trmax):
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
-#    colli=findnoise(csvcp,trmax)
+    colli=findnoise(csvcp,trmax)
     #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
     t=csvcp.dtypes
@@ -54,7 +54,7 @@ def sol(csv,trmax):
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
-#    csvcp.drop(colli,axis=0,inplace=True)
+    csvcp.drop(colli,axis=0,inplace=True)
     csvcp.drop(delist,axis=1,inplace=True)
     for k in objlist:
         label_encoder = LabelEncoder()
@@ -91,14 +91,14 @@ ut=sol(u,trmax)
 li1=[i for i in test.index]
 li2=[i for i in train.index]
 
-#li1=[]
-#li2=[]
-#for i in ut.index:
-#    if i <=trmax:
-#        li2.append(i)
-#    else:
-#        li1.append(i)
-#y.drop(colli,axis=0,inplace=True)
+li1=[]
+li2=[]
+for i in ut.index:
+    if i <=trmax:
+        li2.append(i)
+    else:
+        li1.append(i)
+y.drop(colli,axis=0,inplace=True)
 
 #train1=ut[0:len(li2)]#ut.drop(li2)
 #test1=ut[len(li2):]#ut.drop(li1)
@@ -113,7 +113,7 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=7,max_features=143,random_state=2)
+lr = tree.DecisionTreeRegressor(max_depth=7,max_features=169,random_state=4)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']

@@ -38,6 +38,7 @@ def sol(csv,trmax):
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.1*usv)#非空值少于90%就删去
+    print(csvcp.shape)
     #colli=findnoise(csvcp,trmax)
     #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
@@ -46,18 +47,20 @@ def sol(csv,trmax):
     delist=[]
     for k in range(len(u)):
         #print((csvcp[u[k]]).value_counts())
-        mostv=(csvcp[u[k]]).value_counts().iloc[0]
-        if mostv>0.95*usv:
+        mostv=(csvcp[u[k]]).value_counts()
+        if mostv.iloc[0]>0.95*usv:
             delist.append(u[k])
         if '64' not in str(t[k]):# or k=='MSSubClass':
             objlist.append(str(u[k]))
-            csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(mostv)
+            csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(mostv.index[0])
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
+    print(csvcp.shape)
 #    csvcp.drop(colli,axis=0,inplace=True)
 #    csvcp.drop(delist,axis=1,inplace=True)
     csvcp=pd.get_dummies(csvcp)
+    print(csvcp.shape)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     
     

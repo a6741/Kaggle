@@ -16,6 +16,30 @@ from sklearn.preprocessing import OneHotEncoder
 
 
 
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+#from sklearn.model_selection import train_test_split #废弃！！
+from sklearn.cross_validation import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import make_moons, make_circles, make_classification
+from sklearn.neural_network import BernoulliRBM
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.gaussian_process import GaussianProcess
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+
+
+
+
+
+
+
+
 def anotherway(file):
     for k in file.index:
         if file.loc[(k,'Sex')]=='female':
@@ -387,6 +411,7 @@ cla=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_sta
 #from sklearn.svm import LinearSVC
 #cla=LinearSVC()
 
+cla=QuadraticDiscriminantAnalysis()
 
 cla.fit(file,y)
 

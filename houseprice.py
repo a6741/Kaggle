@@ -105,9 +105,14 @@ train1=ut.drop(li1)
 #lr = svm.SVR()
 
 #from sklearn import ensemble
-lr = ensemble.GradientBoostingRegressor(n_estimators=100)#这里使用100个决策树
+lr = ensemble.GradientBoostingRegressor(n_estimators=1000)#这里使用100个决策树
 
 
+#from sklearn.ensemble import BaggingRegressor
+#lr = BaggingRegressor()
+
+#from sklearn.tree import ExtraTreeRegressor
+#lr = ExtraTreeRegressor()
 
 
 #from sklearn import neighbors

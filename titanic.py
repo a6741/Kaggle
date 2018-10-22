@@ -203,20 +203,20 @@ def ybm(file):
         if isnull[k]:
             file.loc[(k,'Age')]=ma[file.loc[(k,'Name')]]
     
-    for tt in file['Age'].index:
-        ag=file.loc[(tt,'Age')]
-        fp=file.loc[(tt,'Parch')]
-        if ag<20 and fp>0:
-            file.loc[(tt,'Type')]=0
-        elif ag>20 and fp==0:
-            file.loc[(tt,'Type')]=1
-        elif ag<20 and fp==0:
-            file.loc[(tt,'Type')]=2
-        else:
-            file.loc[(tt,'Type')]=3
+#    for tt in file['Age'].index:
+#        ag=file.loc[(tt,'Age')]
+#        fp=file.loc[(tt,'Parch')]
+#        if ag<20 and fp>0:
+#            file.loc[(tt,'Type')]=0
+#        elif ag>20 and fp==0:
+#            file.loc[(tt,'Type')]=1
+#        elif ag<20 and fp==0:
+#            file.loc[(tt,'Type')]=2
+#        else:
+#            file.loc[(tt,'Type')]=3
     file.drop(['SibSp'],axis=1,inplace=True)
     
-    namee=['Name','Embarked','Type']
+    namee=['Name','Embarked']
     for sbs in namee:
         oh=OneHotEncoder().fit_transform(file[sbs].reshape(-1,1)).toarray()[:,1:]
         ohl=oh.shape[1]
@@ -356,7 +356,7 @@ tfi=ano.drop(li1)
 #from sklearn.linear_model import SGDClassifier
 
 from sklearn.ensemble import RandomForestClassifier
-cla=RandomForestClassifier(max_depth=7, n_estimators=9,max_features=6,random_state=2)
+cla=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_state=5)
 
 #fibf.dropna()
 #from sklearn.linear_model import LogisticRegression

@@ -14,6 +14,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import LabelEncoder
 
+from sklearn.preprocessing import Imputer
 from sklearn import linear_model
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectPercentile
@@ -33,11 +34,10 @@ def findnoise(csv,trmax):
                         noiselis.add(k)
     return noiselis
 def sol(csv,trmax):
-    
     global csvcp,colli
     usv=csv.shape[0]
     csvcp=csv.copy()
-    csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)
+    csvcp=csvcp.dropna(axis=1,thresh=0.1*usv)#非空值少于90%就删去
     #colli=findnoise(csvcp,trmax)
     #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
@@ -46,33 +46,18 @@ def sol(csv,trmax):
     delist=[]
     for k in range(len(u)):
         #print((csvcp[u[k]]).value_counts())
-        if (csvcp[u[k]]).value_counts().iloc[0]>0.95*usv:
+        mostv=(csvcp[u[k]]).value_counts().iloc[0]
+        if mostv>0.95*usv:
             delist.append(u[k])
-        elif '64' not in str(t[k]):
+        if '64' not in str(t[k]):# or k=='MSSubClass':
             objlist.append(str(u[k]))
-            csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(method='bfill').fillna(method='ffill')
+            csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(mostv)
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
 #    csvcp.drop(colli,axis=0,inplace=True)
-    csvcp.drop(delist,axis=1,inplace=True)
-    for k in objlist:
-        label_encoder = LabelEncoder()
-        encoded = label_encoder.fit(csvcp[k])
-        integer_encoded=encoded.transform(csvcp[k])
-        csvcp.loc[:,k]=integer_encoded
-        
-#    sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
-#    csvcp=sel.fit_transform(csvcp)
-    for k in objlist:                
-        ohe=OneHotEncoder().fit(integer_encoded.reshape(-1,1))
-        tt=ohe.transform(integer_encoded.reshape(-1,1)).toarray()[:,1:]
-        tl=len(tt[0])
-        dt=pd.DataFrame(tt).set_index(csvcp.index)
-        for ts in range(tl):
-            uk=k+str(ts)
-            csvcp.loc[:,uk]=dt[ts]
-        csvcp.drop(k,axis=1,inplace=True)
+#    csvcp.drop(delist,axis=1,inplace=True)
+    csvcp=pd.get_dummies(csvcp)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     
     

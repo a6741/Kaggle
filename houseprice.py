@@ -13,7 +13,7 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_selection import VarianceThreshold
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn import ensemble
 from sklearn.preprocessing import Imputer
 from sklearn import linear_model
 from sklearn.decomposition import PCA
@@ -100,8 +100,8 @@ train1=ut.drop(li1)
 #train1=usb.transform(train1)
 #test1=usb.transform(test1)
 
-from sklearn import tree
-lr = tree.DecisionTreeRegressor(max_depth=7,max_features=143,random_state=2)
+#from sklearn import tree
+lr = ensemble.RandomForestRegressor()#max_depth=7,max_features=143,random_state=2)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']

@@ -38,7 +38,6 @@ def sol(csv,trmax):
     usv=csv.shape[0]
     csvcp=csv.copy()
     csvcp=csvcp.dropna(axis=1,thresh=0.1*usv)#非空值少于90%就删去
-    print(csvcp.shape)
     #colli=findnoise(csvcp,trmax)
     #csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
@@ -56,13 +55,11 @@ def sol(csv,trmax):
         else:
             means=csvcp.loc[:,u[k]].mean()#mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
-    print(csvcp.shape)
 #    csvcp.drop(colli,axis=0,inplace=True)
 #    csvcp.drop(delist,axis=1,inplace=True)
     csvcp=pd.get_dummies(csvcp)
-    print(csvcp.shape)
+    csvcp=pd.get_dummies(data=csvcp,columns=['MSSubClass'])
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
-    
     
 #    PPP=PCA(n_components=0.5,whiten=True)
 #    csvcp=PPP.fit_transform(csvcp)
@@ -101,7 +98,21 @@ train1=ut.drop(li1)
 #test1=usb.transform(test1)
 
 #from sklearn import tree
-lr = ensemble.RandomForestRegressor()#max_depth=7,max_features=143,random_state=2)
+
+#lr= ensemble.AdaBoostRegressor()
+
+#from sklearn import svm
+#lr = svm.SVR()
+
+#from sklearn import ensemble
+lr = ensemble.GradientBoostingRegressor(n_estimators=100)#这里使用100个决策树
+
+
+
+
+#from sklearn import neighbors
+#lr= neighbors.KNeighborsRegressor()
+#lr = ensemble.RandomForestRegressor()#max_depth=7,max_features=143,random_state=2)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']
@@ -123,14 +134,17 @@ cross_predict = cross_val_predict(lr,train1,y,cv=5)
 score=np.sqrt(metrics.mean_squared_error(np.log(y),np.log(cross_predict)))
 
 
-
-#best=[1,0,0,0]
+#
+#best=[1,0,0,0,0]
 #for i in range(1,10):
-#    for h in range(1,290):
-#        for j in range(1,10):
-#                lr =tree.DecisionTreeRegressor(max_depth=i,max_features=h,random_state=j)
+#    for h in range(1,10):
+#        for j in range(1,279):
+#            for k in range(10):
+#                cla=ensemble.RandomForestRegressor(max_depth=i, n_estimators=h, max_features=j,random_state=k)
 #                cross_predict = cross_val_predict(lr,train1,y,cv=5)
 #                score=np.sqrt(metrics.mean_squared_error(np.log(y),np.log(cross_predict)))
 #                if score<best[0]:
-#                    best=[score,i,h,j]
-#                print(i,h,j)
+#                    best=[score,i,h,j,k]
+#                print(i,h,j,k)
+#with open('sb.txt','w') as f:
+#    f.write(str(best))

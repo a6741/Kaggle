@@ -84,16 +84,15 @@ def sol(csv,trmax):
     for k in range(len(u)):
         #print((csvcp[u[k]]).value_counts())
         mostv=(csvcp[u[k]]).value_counts()
-        if mostv.iloc[0]>0.9*usv:
+        if mostv.iloc[0]>0.98*usv:
             delist.append(u[k])
-        if '64' not in str(t[k]):# or k=='MSSubClass':
+        if '64' not in str(t[k]) or k=='MSSubClass':
             objlist.append(str(u[k]))
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(mostv.index[0])
         else:
             means=csvcp.loc[:,u[k]].mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
-#    csvcp.drop(colli,axis=0,inplace=True)
-#    csvcp.drop(delist,axis=1,inplace=True)
+    csvcp.drop(delist,axis=1,inplace=True)
     csvcp=pd.get_dummies(csvcp,drop_first=True)
     csvcp=pd.get_dummies(data=csvcp,columns=['MSSubClass'],drop_first=True)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))

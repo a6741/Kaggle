@@ -175,12 +175,12 @@ def ybm(file):
     file.drop(['Name','Cabin','Ticket'],axis=1,inplace=True)
     file.loc[:,'Name']=names
     file.loc[:,'Age']=file.loc[:,'Age'].fillna(0)
-    
-    fnu=file['Fare'].isnull()
-    fm=file['Fare'].mean()
-    for k in file.index:
-        if fnu[k]:
-            file.loc[(k,'Fare')]=fm
+    file['Fare'].fillna(file['Fare'].mean())
+#    fnu=file['Fare'].isnull()
+#    fm=file['Fare'].mean()
+#    for k in file.index:
+#        if fnu[k]:
+#            file.loc[(k,'Fare')]=fm
 #    for f in file['Fare'].index:
 #        if file.loc[(f,'Fare')]!=0:
 #            file.loc[(f,'Fare')]=np.log(file.loc[(f,'Fare')])

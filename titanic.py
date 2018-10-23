@@ -152,17 +152,6 @@ def anotherway(file):
     #file.drop(['Name'],axis=1,inplace=True)
     return file
 def ybm(file):
-#    for k in file.index:
-#        if file.loc[(k,'Sex')]=='female':
-#            file.loc[(k,'Sex')]=0
-#        else:
-#            file.loc[(k,'Sex')]=1
-#        if file.loc[(k,'Embarked')]=='S':
-#            file.loc[(k,'Embarked')]=0
-#        elif file.loc[(k,'Embarked')]=='C':
-#            file.loc[(k,'Embarked')]=1
-#        else:
-#            file.loc[(k,'Embarked')]=2
     names=file['Name']
     namedi={'Miss':1,'Master':2,'Mrs':3,'Mr':4}
     for q in names.index:
@@ -171,21 +160,11 @@ def ybm(file):
             names.loc[q]=named#i[named]
         else:
             names.loc[q]='other'#5
-    
-    file.drop(['Name','Cabin','Ticket'],axis=1,inplace=True)
     file.loc[:,'Name']=names
+    
+    file.drop(['Cabin','Ticket'],axis=1,inplace=True)
     file.loc[:,'Age']=file.loc[:,'Age'].fillna(0)
-    file['Fare'].fillna(file['Fare'].mean())
-#    fnu=file['Fare'].isnull()
-#    fm=file['Fare'].mean()
-#    for k in file.index:
-#        if fnu[k]:
-#            file.loc[(k,'Fare')]=fm
-#    for f in file['Fare'].index:
-#        if file.loc[(f,'Fare')]!=0:
-#            file.loc[(f,'Fare')]=np.log(file.loc[(f,'Fare')])
-#        else:
-#            file.loc[(f,'Fare')]=0
+    file.loc[:,'Fare']=file['Fare'].fillna(file['Fare'].mean())
     ma=file.groupby(['Name'])['Age'].mean()
     mnu=ma.isnull()
     for k in ma.index:
@@ -223,22 +202,11 @@ def ybm(file):
                     p-=1        
             ma[k]=(la+ne)*isout/2
     isnull=file['Age'].isnull()
-    file.loc[:,'Family']=file.loc[:,'SibSp']+file.loc[:,'Parch']
     for k in isnull.index:
         if isnull[k]:
             file.loc[(k,'Age')]=ma[file.loc[(k,'Name')]]
-    
-#    for tt in file['Age'].index:
-#        ag=file.loc[(tt,'Age')]
-#        fp=file.loc[(tt,'Parch')]
-#        if ag<20 and fp>0:
-#            file.loc[(tt,'Type')]=0
-#        elif ag>20 and fp==0:
-#            file.loc[(tt,'Type')]=1
-#        elif ag<20 and fp==0:
-#            file.loc[(tt,'Type')]=2
-#        else:
-#            file.loc[(tt,'Type')]=3
+
+    file.loc[:,'Family']=file.loc[:,'SibSp']+file.loc[:,'Parch']    
     file.drop(['SibSp','Parch'],axis=1,inplace=True)
     
     file=pd.get_dummies(file,drop_first=True)
@@ -385,6 +353,9 @@ tfi=ano.drop(li1)
 #from sklearn.ensemble import RandomForestClassifier
 cla=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_state=5)
 
+
+from xgboost import XGBClassifier
+cla=XGBClassifier()
 #fibf.dropna()
 #from sklearn.linear_model import LogisticRegression
 #cla=LogisticRegression()

@@ -84,7 +84,7 @@ def sol(csv,trmax):
     for k in range(len(u)):
         #print((csvcp[u[k]]).value_counts())
         mostv=(csvcp[u[k]]).value_counts()
-        if mostv.iloc[0]>0.98*usv:
+        if mostv.iloc[0]>0.9*usv:
             delist.append(u[k])
         if '64' not in str(t[k]) or k=='MSSubClass':
             objlist.append(str(u[k]))
@@ -92,7 +92,7 @@ def sol(csv,trmax):
         else:
             means=csvcp.loc[:,u[k]].mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
-    csvcp.drop(delist,axis=1,inplace=True)
+#    csvcp.drop(delist,axis=1,inplace=True)
     csvcp=pd.get_dummies(csvcp,drop_first=True)
     csvcp=pd.get_dummies(data=csvcp,columns=['MSSubClass'],drop_first=True)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
@@ -139,10 +139,11 @@ test1=ut[len(li2):]#ut.drop(li1)
 
 #from sklearn import svm
 #lr = svm.SVR()
-
+import xgboost as xgb
 #from sklearn import ensemble
 lr = ensemble.GradientBoostingRegressor(n_estimators=1000)
 
+lr=xgb.XGBRegressor()
 
 #from sklearn.ensemble import BaggingRegressor
 #lr = BaggingRegressor()

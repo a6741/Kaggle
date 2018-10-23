@@ -152,25 +152,26 @@ def anotherway(file):
     #file.drop(['Name'],axis=1,inplace=True)
     return file
 def ybm(file):
-    for k in file.index:
-        if file.loc[(k,'Sex')]=='female':
-            file.loc[(k,'Sex')]=0
-        else:
-            file.loc[(k,'Sex')]=1
-        if file.loc[(k,'Embarked')]=='S':
-            file.loc[(k,'Embarked')]=0
-        elif file.loc[(k,'Embarked')]=='C':
-            file.loc[(k,'Embarked')]=1
-        else:
-            file.loc[(k,'Embarked')]=2
+#    for k in file.index:
+#        if file.loc[(k,'Sex')]=='female':
+#            file.loc[(k,'Sex')]=0
+#        else:
+#            file.loc[(k,'Sex')]=1
+#        if file.loc[(k,'Embarked')]=='S':
+#            file.loc[(k,'Embarked')]=0
+#        elif file.loc[(k,'Embarked')]=='C':
+#            file.loc[(k,'Embarked')]=1
+#        else:
+#            file.loc[(k,'Embarked')]=2
     names=file['Name']
     namedi={'Miss':1,'Matser':2,'Mrs':3,'Mr':4}
     for q in names.index:
         named=(names[q].split(',')[1]).split('.')[0].replace(' ','')
         if named in namedi.keys():
-            names.loc[q]=namedi[named]
+            names.loc[q]=named#i[named]
         else:
-            names.loc[q]=5
+            names.loc[q]='other'#5
+    
     file.drop(['Name','Cabin','Ticket'],axis=1,inplace=True)
     file.loc[:,'Name']=names
     file.loc[:,'Age']=file.loc[:,'Age'].fillna(0)
@@ -240,18 +241,20 @@ def ybm(file):
 #            file.loc[(tt,'Type')]=3
     file.drop(['SibSp'],axis=1,inplace=True)
     
-    namee=['Name','Embarked']
-    for sbs in namee:
-        oh=OneHotEncoder().fit_transform(file[sbs].reshape(-1,1)).toarray()[:,1:]
-        ohl=oh.shape[1]
-        doh=pd.DataFrame(oh).set_index(file.index)
-        num=sbs
-        for ti in range(ohl):
-            file.loc[:,num+str(ti)]=doh[ti]
+    file=pd.get_dummies(file)
+
+#    namee=['Name','Embarked']
+#    for sbs in namee:
+#        oh=OneHotEncoder().fit_transform(file[sbs].reshape(-1,1)).toarray()[:,1:]
+#        ohl=oh.shape[1]
+#        doh=pd.DataFrame(oh).set_index(file.index)
+#        num=sbs
+#        for ti in range(ohl):
+#            file.loc[:,num+str(ti)]=doh[ti]
 
     
     
-    file.drop(namee,axis=1,inplace=True)
+#    file.drop(namee,axis=1,inplace=True)
     file=file.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     #file.drop(['Name'],axis=1,inplace=True)
     return file

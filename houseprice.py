@@ -21,7 +21,7 @@ from sklearn.feature_selection import SelectPercentile
 from sklearn.feature_selection import chi2
 
 def findnoise(csv,trmax):
-    thresh=4
+    thresh=5
     noiselis=set()
     for qs in csv:
         q=csv[qs]

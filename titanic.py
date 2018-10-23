@@ -164,13 +164,13 @@ def ybm(file):
 #        else:
 #            file.loc[(k,'Embarked')]=2
     names=file['Name']
-    namedi={'Miss':1,'Matser':2,'Mrs':3,'Mr':4}
+    namedi={'Miss':1,'Master':2,'Mrs':3,'Mr':4}
     for q in names.index:
         named=(names[q].split(',')[1]).split('.')[0].replace(' ','')
-        #if named in namedi.keys():
-        names.loc[q]=named#i[named]
-        #else:
-         #   names.loc[q]='other'#5
+        if named in namedi.keys():
+            names.loc[q]=named#i[named]
+        else:
+            names.loc[q]='other'#5
     
     file.drop(['Name','Cabin','Ticket'],axis=1,inplace=True)
     file.loc[:,'Name']=names
@@ -432,9 +432,9 @@ tfic=tfi.copy()
 #poly = PolynomialFeatures(degree=2, include_bias=False, interaction_only=False)
 #tfic_ploly = poly.fit_transform(tfic)
 
-tfi.loc[:,'pre']=cla.predict(tfic)
-tu=tfi.loc[:,'pre'].astype('int')
-tu.to_csv('pr.csv')
+tfi.loc[:,'Survived']=cla.predict(tfic)
+tu=tfi.loc[:,'Survived'].astype('int')
+tu.to_csv('pr.csv',header=True)
 
 from sklearn.model_selection import cross_val_score
 accu = cross_val_score(cla, file, y, cv=3, scoring="accuracy" ).mean()

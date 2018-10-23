@@ -411,7 +411,7 @@ cla=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_sta
 #from sklearn.svm import LinearSVC
 #cla=LinearSVC()
 
-cla=QuadraticDiscriminantAnalysis()
+#cla=QuadraticDiscriminantAnalysis()
 
 cla.fit(file,y)
 

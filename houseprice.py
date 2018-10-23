@@ -37,9 +37,9 @@ def sol(csv,trmax):
     global csvcp,colli
     usv=csv.shape[0]
     csvcp=csv.copy()
-    csvcp=csvcp.dropna(axis=1,thresh=0.1*usv)#非空值少于90%就删去
-    #colli=findnoise(csvcp,trmax)
-    #csvcp.drop(colli,axis=0,inplace=True)
+    csvcp=csvcp.dropna(axis=1,thresh=0.5*usv)#非空值少于90%就删去
+    colli=findnoise(csvcp,trmax)
+    csvcp.drop(colli,axis=0,inplace=True)
     u=csvcp.columns
     t=csvcp.dtypes
     objlist=['MSSubClass']
@@ -76,20 +76,20 @@ ut=sol(u,trmax)
 li1=[i for i in test.index]
 li2=[i for i in train.index]
 
-#li1=[]
-#li2=[]
-#for i in ut.index:
-#    if i <=trmax:
-#        li2.append(i)
-#    else:
-#        li1.append(i)
-#y.drop(colli,axis=0,inplace=True)
+li1=[]
+li2=[]
+for i in ut.index:
+    if i <=trmax:
+        li2.append(i)
+    else:
+        li1.append(i)
+y.drop(colli,axis=0,inplace=True)
 
-#train1=ut[0:len(li2)]#ut.drop(li2)
-#test1=ut[len(li2):]#ut.drop(li1)
+train1=ut[0:len(li2)]#ut.drop(li2)
+test1=ut[len(li2):]#ut.drop(li1)
 #
-test1=ut.drop(li2)
-train1=ut.drop(li1)
+#test1=ut.drop(li2)
+#train1=ut.drop(li1)
 
 
 #usb=SelectPercentile(chi2, percentile=70)

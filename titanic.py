@@ -239,7 +239,7 @@ def ybm(file):
 #            file.loc[(tt,'Type')]=2
 #        else:
 #            file.loc[(tt,'Type')]=3
-    file.drop(['SibSp'],axis=1,inplace=True)
+    file.drop(['SibSp','Parch'],axis=1,inplace=True)
     
     file=pd.get_dummies(file,drop_first=True)
 
@@ -382,7 +382,7 @@ tfi=ano.drop(li1)
 
 #from sklearn.linear_model import SGDClassifier
 
-from sklearn.ensemble import RandomForestClassifier
+#from sklearn.ensemble import RandomForestClassifier
 cla=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_state=5)
 
 #fibf.dropna()

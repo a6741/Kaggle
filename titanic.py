@@ -241,7 +241,7 @@ def ybm(file):
 #            file.loc[(tt,'Type')]=3
     file.drop(['SibSp'],axis=1,inplace=True)
     
-    file=pd.get_dummies(file)
+    file=pd.get_dummies(file,drop_first=True)
 
 #    namee=['Name','Embarked']
 #    for sbs in namee:

@@ -57,8 +57,8 @@ def sol(csv,trmax):
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
 #    csvcp.drop(colli,axis=0,inplace=True)
 #    csvcp.drop(delist,axis=1,inplace=True)
-    csvcp=pd.get_dummies(csvcp)
-    csvcp=pd.get_dummies(data=csvcp,columns=['MSSubClass'])
+    csvcp=pd.get_dummies(csvcp,drop_first=True)
+    csvcp=pd.get_dummies(data=csvcp,columns=['MSSubClass'],drop_first=True)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     
 #    PPP=PCA(n_components=0.5,whiten=True)

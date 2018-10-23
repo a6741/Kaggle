@@ -167,10 +167,10 @@ def ybm(file):
     namedi={'Miss':1,'Matser':2,'Mrs':3,'Mr':4}
     for q in names.index:
         named=(names[q].split(',')[1]).split('.')[0].replace(' ','')
-        if named in namedi.keys():
-            names.loc[q]=named#i[named]
-        else:
-            names.loc[q]='other'#5
+        #if named in namedi.keys():
+        names.loc[q]=named#i[named]
+        #else:
+         #   names.loc[q]='other'#5
     
     file.drop(['Name','Cabin','Ticket'],axis=1,inplace=True)
     file.loc[:,'Name']=names

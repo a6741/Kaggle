@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sat Oct 20 20:05:12 2018
-
 @author: ljk
 """
 
@@ -19,7 +18,7 @@ from sklearn import linear_model
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectPercentile
 from sklearn.feature_selection import chi2
-
+from sklearn.ensemble import VotingClassifier
 
 def canbebone():
     with open('/home/ljk/下载/kaggle/all (2)/data_description.txt') as f:
@@ -84,7 +83,7 @@ def sol(csv,trmax):
     for k in range(len(u)):
         #print((csvcp[u[k]]).value_counts())
         mostv=(csvcp[u[k]]).value_counts()
-        if mostv.iloc[0]>0.9*usv:
+        if mostv.iloc[0]>0.98*usv:
             delist.append(u[k])
         if '64' not in str(t[k]) or k=='MSSubClass':
             objlist.append(str(u[k]))
@@ -92,7 +91,7 @@ def sol(csv,trmax):
         else:
             means=csvcp.loc[:,u[k]].mode()[0]
             csvcp.loc[:,u[k]]=csvcp.loc[:,u[k]].fillna(means)
-#    csvcp.drop(delist,axis=1,inplace=True)
+    csvcp.drop(delist,axis=1,inplace=True)
     csvcp=pd.get_dummies(csvcp,drop_first=True)
     csvcp=pd.get_dummies(data=csvcp,columns=['MSSubClass'],drop_first=True)
     csvcp=csvcp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
@@ -139,29 +138,30 @@ test1=ut[len(li2):]#ut.drop(li1)
 
 #from sklearn import svm
 #lr = svm.SVR()
-import xgboost as xgb
+
 #from sklearn import ensemble
 lr = ensemble.GradientBoostingRegressor(n_estimators=1000)
 
-lr=xgb.XGBRegressor()
 
 #from sklearn.ensemble import BaggingRegressor
-#lr = BaggingRegressor()
+#glr = BaggingRegressor()
 
 #from sklearn.tree import ExtraTreeRegressor
 #lr = ExtraTreeRegressor()
 
 
 #from sklearn import neighbors
-#lr= neighbors.KNeighborsRegressor()
-#lr = ensemble.RandomForestRegressor()#max_depth=7,max_features=143,random_state=2)
+#blr= neighbors.KNeighborsRegressor()
+#rlr = ensemble.RandomForestRegressor()#max_depth=7,max_features=143,random_state=2)
 #7,151,8
 #lr = linear_model.LinearRegression()
 #y=train1['SalePrice']
 #xx=train1.drop(['SalePrice'],axis=1)
+
+
+#lr = VotingClassifier(estimators=[('lr', glr), ('rf', rlr), ('gnb', blr)], voting='hard')
+
 lr.fit(train1,y)
-
-
 
 test.loc[:,'SalePrice']=lr.predict(test1)
 
@@ -190,8 +190,3 @@ score=np.sqrt(metrics.mean_squared_error(np.log(np.e**y-1),np.log(np.e**cross_pr
 #                print(i,h,j,k)
 #with open('sb.txt','w') as f:
 #    f.write(str(best))
-
-
-
-
-

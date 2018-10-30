@@ -16,18 +16,18 @@ from sklearn.preprocessing import OneHotEncoder
 
 
 
-
+from sklearn.ensemble import VotingClassifier
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 #from sklearn.model_selection import train_test_split #废弃！！
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.datasets import make_moons, make_circles, make_classification
 from sklearn.neural_network import BernoulliRBM
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from sklearn.gaussian_process import GaussianProcess
+from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -162,7 +162,7 @@ def ybm(file):
             names.loc[q]='other'#5
     file.loc[:,'Name']=names
     
-    file.drop(['Cabin','Ticket'],axis=1,inplace=True)
+    file.drop(['Ticket'],axis=1,inplace=True)
     file.loc[:,'Age']=file.loc[:,'Age'].fillna(0)
     file.loc[:,'Fare']=file['Fare'].fillna(file['Fare'].mean())
     ma=file.groupby(['Name'])['Age'].mean()
@@ -206,11 +206,21 @@ def ybm(file):
         if isnull[k]:
             file.loc[(k,'Age')]=ma[file.loc[(k,'Name')]]
 
-    file.loc[:,'Family']=file.loc[:,'SibSp']+file.loc[:,'Parch']    
-    file.drop(['SibSp','Parch'],axis=1,inplace=True)
+    file.loc[:,'Family']=file.loc[:,'SibSp']+file.loc[:,'Parch'] 
+    
+    duf=file.dropna().duplicated(subset='Cabin')   
+    
+    file.drop(['SibSp','Parch','Cabin'],axis=1,inplace=True)
+    
     
     file=pd.get_dummies(file,drop_first=True)
-
+    
+    for k in file.index:
+        #print(k)
+        if file.loc[(k,'Family')]==0 and (k not in duf.index or duf.loc[k]!=True):
+            file.loc[(k,'Alone')]=1
+        else:
+            file.loc[(k,'Alone')]=0
 #    namee=['Name','Embarked']
 #    for sbs in namee:
 #        oh=OneHotEncoder().fit_transform(file[sbs].reshape(-1,1)).toarray()[:,1:]
@@ -351,17 +361,19 @@ tfi=ano.drop(li1)
 #from sklearn.linear_model import SGDClassifier
 
 #from sklearn.ensemble import RandomForestClassifier
-cla=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_state=5)
+cla0=RandomForestClassifier(max_depth=5, n_estimators=8,max_features=9,random_state=5)
 
-
-from xgboost import XGBClassifier
-cla=XGBClassifier()
+#from xgboost import XGBClassifier
+#cla=XGBClassifier()
 #fibf.dropna()
-#from sklearn.linear_model import LogisticRegression
-#cla=LogisticRegression()
+from sklearn.linear_model import LogisticRegression
+cla1=LogisticRegression()
 
-#from sklearn.ensemble import GradientBoostingClassifier
-#cla2=GradientBoostingClassifier(n_estimators=30, learning_rate=0.9,max_depth=100, random_state=0)
+from sklearn.ensemble import GradientBoostingClassifier
+cla2=GradientBoostingClassifier(n_estimators=30, learning_rate=0.9,max_depth=100, random_state=0)
+
+
+
 #cla2.fit(file,y)
 
 #shape=file.shape[0]
@@ -377,7 +389,51 @@ cla=XGBClassifier()
 #cla = linear_model.LinearRegression()
 
 #from sklearn.neighbors import KNeighborsClassifier
-#cla = KNeighborsClassifier()
+cla3 = KNeighborsClassifier()
+#cla = VotingClassifier(estimators=[('lr', cla1), ('rf', cla2)], voting='soft')
+
+
+
+
+
+
+from mlxtend.classifier import StackingClassifier  
+
+clfs=[cla1,cla0,cla3]
+cla = StackingClassifier(classifiers=clfs,   
+                          meta_classifier=cla2)  
+#from sklearn.cross_validation import StratifiedKFold
+#n_folds = 5
+#skf = list(StratifiedKFold(y, n_folds))
+#for j, clf in enumerate(clfs):
+#    '''依次训练各个单模型'''
+#    dataset_blend_test_j = np.zeros((X_predict.shape[0], len(skf)))
+#    for i, (train, test) in enumerate(skf):
+#        '''使用第i个部分作为预测，剩余的部分来训练模型，获得其预测的输出作为第i部分的新特征。'''
+#        X_train, y_train, X_test, y_test = X[train], y[train], X[test], y[test]
+#        clf.fit(X_train, y_train)
+#        y_submission = clf.predict_proba(X_test)[:, 1]
+#        dataset_blend_train[test, j] = y_submission
+#        dataset_blend_test_j[:, i] = clf.predict_proba(X_predict)[:, 1]
+#    '''对于测试集，直接用这k个模型的预测值均值作为新的特征。'''
+#    dataset_blend_test[:, j] = dataset_blend_test_j.mean(1)
+#
+#'''融合使用的模型'''
+#clf = GradientBoostingClassifier(learning_rate=0.02, subsample=0.5, max_depth=6, n_estimators=30)
+#clf.fit(dataset_blend_train, y)
+#y_submission = clf.predict_proba(dataset_blend_test)[:, 1]
+
+
+
+
+
+
+
+
+
+
+
+
 
 #from sklearn.naive_bayes import GaussianNB
 #cla=GaussianNB()

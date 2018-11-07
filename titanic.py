@@ -325,6 +325,22 @@ def csv(file):
             file.loc[(k,'Age')]=ma[file.loc[(k,'Cabin')]]
     file=file.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
     return file
+def gettrain():
+    file = pd.read_csv('/home/ljk/下载/kaggle/all/train.csv',encoding='utf8',index_col='PassengerId')
+    tfi=pd.read_csv('/home/ljk/下载/kaggle/all/test.csv',encoding='utf8',index_col='PassengerId')
+
+    y=file['Survived']
+    files=file.drop(['Survived'],axis=1)
+    u=pd.concat((files,tfi),axis=0)
+    ano=ybm(u)
+    
+    li1=[i for i in files.index]
+    li2=[i for i in tfi.index]
+    
+    
+    file=ano.drop(li2)
+    tfi=ano.drop(li1)
+    return file,tfi,pd.get_dummies(y)
 #file.loc[:,'Group']=KMeans(n_clusters=50,random_state=170).fit_predict(file)
 file = pd.read_csv('/home/ljk/下载/kaggle/all/train.csv',encoding='utf8',index_col='PassengerId')
 tfi=pd.read_csv('/home/ljk/下载/kaggle/all/test.csv',encoding='utf8',index_col='PassengerId')
